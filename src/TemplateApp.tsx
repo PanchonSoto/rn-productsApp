@@ -9,6 +9,7 @@ import * as eva from '@eva-design/eva';
 import { NavigationContainer } from '@react-navigation/native';
 
 import { StackNavigator } from './presentation/router/StackNavigator';
+import { AuthProvider } from './presentation/providers/AuthProvider';
 
 
 export const TemplateApp = () => {
@@ -34,7 +35,9 @@ export const TemplateApp = () => {
             notification: theme['color-primary-500']
           }
         }}>
-          <StackNavigator />
+          <AuthProvider>
+            <StackNavigator />
+          </AuthProvider>
         </NavigationContainer>
       </ApplicationProvider>
     </>
