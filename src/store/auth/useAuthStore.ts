@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import { User } from "../../domain/entities/entities/user";
 import { AuthStatus } from "../../infrastructure/interfaces/auth.status";
-import { authLogin } from "../../actions/auth/auth";
+import { authCheckStatus, authLogin } from "../../actions/auth/auth";
+import { StorageHelper } from "../../config/helpers/storage-helper";
 
 
 
@@ -11,6 +12,7 @@ export interface AuthState {
     user?: User;
 
     login: (email:string, password:string) => Promise<boolean>;
+    checkStatus: ()=>Promise<void>;
 }
 
 
@@ -28,10 +30,22 @@ export const useAuthStore = create<AuthState>()((set,get)=>({
             set({status:'authenticated', token:undefined, user:undefined});
             return false;
         }
-        console.log({res});
+
+        await StorageHelper.setItem('token', res.token);
+
         set({status:'authenticated', token:res.token, user:res.user});
 
         return true;
+
+    },
+    checkStatus: async() => {
+        const res = await authCheckStatus();
+        if(!res) {
+            set({status:'unauthenticated', token:undefined, user:undefined});
+            return;
+        }
+        await StorageHelper.setItem('token', res.token);
+        set({status:'authenticated', token:res.token, user:res.user});
 
     }
 }));
