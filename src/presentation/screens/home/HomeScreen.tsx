@@ -1,22 +1,27 @@
-import { Button, Icon, Layout, Text } from '@ui-kitten/components';
 import { StyleSheet } from 'react-native';
-import { useAuthStore } from '../../../store/auth/useAuthStore';
+import { Layout, Text } from '@ui-kitten/components';
+import { useQuery } from '@tanstack/react-query';
+
+import { getProductsByPage } from '../../../actions/products/get-products-by-page';
 
 
 export const HomeScreen = () => {
 
-  const { logout } = useAuthStore();
+
+  const { isLoading, data:products=[], } = useQuery({
+    queryKey: ['products', 'infinite'],
+    staleTime: 1000*60*60, //1hour
+    queryFn: ()=> getProductsByPage(0),
+  });
+
+
+
 
   return (
     <Layout style={styles.layout}>
-      <Text>HomeScreen</Text>
+      <Text>{JSON.stringify(products,null,2)}</Text>
 
-      <Button
-       onPress={logout}
-       accessoryLeft={<Icon name="log-out-outline"/>}
-      >
-        Cerrar Sesion
-      </Button>
+
     </Layout>
   );
 }
