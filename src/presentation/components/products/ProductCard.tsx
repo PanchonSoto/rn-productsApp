@@ -1,7 +1,9 @@
-import { Card, Text } from "@ui-kitten/components";
-import { Product } from "../../../domain/entities/entities/product"
 import { Image, StyleSheet } from "react-native";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { Card, Text } from "@ui-kitten/components";
 import { FadeInImage } from "../ui/FadeInImage";
+import { RootStackParams } from '../../router/StackNavigator';
+import { Product } from "../../../domain/entities/entities/product"
 
 
 
@@ -13,9 +15,13 @@ interface Props {
 
 export const ProductCard = ({product}:Props) => {
     // console.log({product})
+
+    const navigation = useNavigation<NavigationProp<RootStackParams>>();
+
   return (
     <Card
      style={styles.Kcard}
+     onPress={()=>navigation.navigate('ProductScreen',{productId:product.id})}
     >
         {
             (product.images.length===0)
