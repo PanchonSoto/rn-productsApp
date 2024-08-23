@@ -2,7 +2,7 @@ import React from 'react';
 import { Divider, Layout, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { MyIcon } from '../components/MyIcon';
+import { MyIcon } from '../components/ui/MyIcon';
 
 
 
@@ -49,7 +49,7 @@ export const MainLayout = ({title, subTitle, rightAction, righActionIcon, childr
         />
         <Divider />
 
-        <Layout>
+        <Layout style={{height:'100%'}}>
             {children}
         </Layout>
     </Layout>

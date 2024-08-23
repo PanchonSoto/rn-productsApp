@@ -3,7 +3,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { StackScreenProps } from '@react-navigation/stack';
 import { Button, Input, Layout, Text } from '@ui-kitten/components';
 
-import { MyIcon } from '../../components/MyIcon';
+import { MyIcon } from '../../components/ui/MyIcon';
 import { RootStackParams } from '../../router/StackNavigator';
 
 
