@@ -1,13 +1,14 @@
+import { useRef } from "react";
 import { RouteProp, useRoute } from "@react-navigation/native";
+import { FlatList, ScrollView } from "react-native-gesture-handler";
 import { StackScreenProps } from "@react-navigation/stack";
 import { Button, ButtonGroup, Input, Layout, Text, useTheme } from "@ui-kitten/components";
+import { Formik } from "formik";
 import { useQuery } from "@tanstack/react-query";
 
 import { MainLayout } from "../../layouts/MainLayout";
 import { RootStackParams } from "../../router/StackNavigator";
 import { getProductById } from "../../../actions/products/get-products-by-id";
-import { useRef } from "react";
-import { FlatList, ScrollView } from "react-native-gesture-handler";
 import { FadeInImage } from "../../components/ui/FadeInImage";
 import { Size } from "../../../domain/entities/entities/product";
 import Badge from "../../components/ui/Badge";
@@ -43,90 +44,106 @@ export const ProductScreen = ({ route }: Props) => {
 
 
   return (
-    <MainLayout
-      title={product?.title}
-      subTitle={`Precio: ${product.price}`}
-    >
-      <ScrollView style={{ flex: 1 }}>
-        {/* images */}
-        <Layout>
-          <FlatList
-            data={product.images}
-            keyExtractor={(item) => item}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            renderItem={({ item }) => (
-              <FadeInImage
-                uri={item}
-                style={{ width: 300, height: 300, marginHorizontal: 7 }}
+    <Formik initialValues={product} onSubmit={values=>console.log(values)}>
+      {({handleChange, handleSubmit, values, errors, setFieldValue})=>(
+        <MainLayout
+          title={values?.title}
+          subTitle={`Precio: ${values.price}`}
+        >
+          <ScrollView style={{ flex: 1 }}>
+            {/* images */}
+            <Layout>
+              <FlatList
+                data={values.images}
+                keyExtractor={(item) => item}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                renderItem={({ item }) => (
+                  <FadeInImage
+                    uri={item}
+                    style={{ width: 300, height: 300, marginHorizontal: 7 }}
+                  />
+                )}
               />
-            )}
-          />
-        </Layout>
-        {/* title & slug  */}
-        <Layout style={{ marginHorizontal: 10 }}>
-          <Input
-            label="Titulo"
-            value={product.title}
-            style={{ marginVertical: 5 }}
-          />
-          <Input
-            label="Slug"
-            value={product.slug}
-            style={{ marginVertical: 5 }}
-          />
+            </Layout>
+            {/* title & slug  */}
+            <Layout style={{ marginHorizontal: 10 }}>
+              <Input
+                label="Titulo"
+                value={values.title}
+                style={{ marginVertical: 5 }}
+                onChangeText={handleChange('title')}
+              />
+              <Input
+                label="Slug"
+                value={values.slug}
+                style={{ marginVertical: 5 }}
+                onChangeText={handleChange('slug')}
+              />
 
-          <Input
-            label="Descripcion"
-            value={product.description}
-            style={{ marginVertical: 5 }}
-            multiline
-            numberOfLines={5}
-          />
-        </Layout>
-        {/* price & stock */}
-        <Layout style={{ marginHorizontal: 15, flexDirection: 'row', gap: 10 }}>
-          <Input
-            label="Precio"
-            value={product.price.toString()}
-            style={{ flex: 1 }}
-          />
-          <Input
-            label="Inventario"
-            value={product.stock.toString()}
-            style={{ flex: 1 }}
-          />
-        </Layout>
+              <Input
+                label="Descripcion"
+                value={values.description}
+                style={{ marginVertical: 5 }}
+                onChangeText={handleChange('description')}
+                multiline
+                numberOfLines={5}
+              />
+            </Layout>
+            {/* price & stock */}
+            <Layout style={{ marginHorizontal: 15, flexDirection: 'row', gap: 10 }}>
+              <Input
+                label="Precio"
+                value={values.price.toString()}
+                onChangeText={handleChange('price')}
+                style={{ flex: 1 }}
+              />
+              <Input
+                label="Inventario"
+                value={values.stock.toString()}
+                onChangeText={handleChange('stock')}
+                style={{ flex: 1 }}
+              />
+            </Layout>
 
-        {/* Selectors */}
-        <Badge
-          value={product.gender}
-        />
-        <ButtonGroup
-          style={{ margin: 2, marginTop: 20, marginHorizontal: 15 }}
-          size="small"
-          appearance="outline"
-        >
-          {
-            sizes.map((size) => (
-              <Button
-                key={size}
-                style={{ flex: 1, backgroundColor: true ? theme['color-primary-200'] : undefined }}
-              >{size}</Button>
-            ))
-          }
-        </ButtonGroup>
+            {/* Selectors */}
+            <Badge
+              value={product.gender}
+            />
+            <ButtonGroup
+              style={{ margin: 2, marginTop: 20, marginHorizontal: 15 }}
+              size="small"
+              appearance="outline"
+            >
+              {
+                sizes.map((size) => (
+                  <Button
+                    onPress={()=> setFieldValue(
+                      'sizes',
+                      values.sizes.includes(size)
+                      ? values.sizes.filter(s=>s!==size)
+                      : [...values.sizes,size]
+                      )
+                    }
+                    key={size}
+                    style={{ flex: 1, backgroundColor: values.sizes.includes(size) ? theme['color-primary-200'] : undefined }}
+                  >{size}</Button>
+                ))
+              }
+            </ButtonGroup>
 
-        <Button
-          accessoryLeft={<MyIcon name="save-outline" white />}
-          onPress={() => console.log('Guardar')}
-          style={{ margin: 15 }}
-        >
-          Guardar
-        </Button>
-        <Text>{JSON.stringify(product,null,2)}</Text>
-        <Layout style={{ height: 200 }} />
-      </ScrollView>
-    </MainLayout>
+            <Button
+              accessoryLeft={<MyIcon name="save-outline" white />}
+              onPress={() => console.log('Guardar')}
+              style={{ margin: 15 }}
+            >
+              Guardar
+            </Button>
+            <Text>{JSON.stringify(values,null,2)}</Text>
+            <Layout style={{ height: 200 }} />
+          </ScrollView>
+        </MainLayout>
+      )}
+    </Formik>
   );
 }
